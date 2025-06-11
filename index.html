@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>kacSearch</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 50px;
+        }
+        .search-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            display: inline-block;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+        }
+        button {
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #357ae8;
+        }
+    </style>
+    <script>
+        function performSearch() {
+            let query = document.getElementById("searchBox").value.trim();
+
+            // Redirect to Eaglercraft if "Minecraft" is entered
+            if (query.toLowerCase() === "minecraft") {
+                window.open("https://eagler12archive.watrlabs.lol/versions/u0/WASM/", "_blank", "noopener,noreferrer");
+                return;
+            }
+
+            let searchUrl = "https://www.google.com/search?q=" + encodeURIComponent(query);
+
+            if (query.startsWith("$wiki ")) {
+                searchUrl = "https://en.wikipedia.org/wiki/Special:Search?search=" + encodeURIComponent(query.replace("$wiki ", ""));
+            } else if (query.startsWith("$yt ")) {
+                searchUrl = "https://www.youtube.com/results?search_query=" + encodeURIComponent(query.replace("$yt ", ""));
+            } else if (query.startsWith("$spotify ")) {
+                searchUrl = "https://open.spotify.com/search/" + encodeURIComponent(query.replace("$spotify ", ""));
+            } else if (query.startsWith("$s ")) {
+                searchUrl = "https://scratch.mit.edu/search/projects?q=" + encodeURIComponent(query.replace("$s ", ""));
+            }
+
+            // Prevents blank page issue by ensuring search query isn't empty
+            if (searchUrl !== "") {
+                window.open(searchUrl, "_blank", "noopener,noreferrer");
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="search-container">
+        <h2>Welcome to kacSearch</h2>
+        <form onsubmit="event.preventDefault(); performSearch();" target="_blank">
+            <input type="text" id="searchBox" placeholder="Type your search ($wiki, $yt, $spotify, $s, Minecraft)" required>
+            <button type="submit">KacSearch google</button>
+        </form>
+    </div>
+</body>
+</html>
