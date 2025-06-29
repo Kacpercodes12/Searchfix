@@ -1,82 +1,221 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>kacSearch</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 50px;
-        }
-        .search-container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-            display: inline-block;
-        }
-        input[type="text"] {
-            width: 80%;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            outline: none;
-        }
-        button {
-            background-color: #4285F4;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        button:hover {
-            background-color: #357ae8;
-        }
-    </style>
-    <script>
-        function performSearch() {
-            let query = document.getElementById("searchBox").value.trim();
+  <meta charset="UTF-8" />
+  <title>kacSearch</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      margin: 0;
+      font-family: Segoe UI, sans-serif;
+      background: #f4f4f4;
+      color: black;
+      padding: 40px 20px;
+      transition: all 0.3s ease;
+    }
+    .search-container {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+    button {
+      padding: 12px;
+      font-size: 16px;
+      margin: 8px 4px;
+      background: #00c853;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #copilotBtn, #settingsBtn {
+      position: fixed;
+      bottom: 20px;
+      z-index: 999;
+      border-radius: 6px;
+      padding: 10px 16px;
+      border: none;
+      font-size: 16px;
+      background: #00c853;
+      color: white;
+    }
+    #copilotBtn { left: 20px; }
+    #settingsBtn { right: 20px; }
 
-            // Redirect to Eaglercraft if "Minecraft" is entered
-            if (query.toLowerCase() === "minecraft") {
-                window.open("https://eagler12archive.watrlabs.lol/versions/u0/WASM/", "_blank", "noopener,noreferrer");
-                return;
-            }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      z-index: 10000;
+    }
+    .modal-content {
+      width: 90%;
+      height: 90%;
+      margin: 5% auto;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+    }
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 28px;
+      cursor: pointer;
+    }
+    #settingsMenu {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      background: white;
+      border: 1px solid #ccc;
+      padding: 16px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      display: none;
+      z-index: 999;
+    }
 
-            let searchUrl = "https://www.google.com/search?q=" + encodeURIComponent(query);
-
-            if (query.startsWith("$wiki ")) {
-                searchUrl = "https://en.wikipedia.org/wiki/Special:Search?search=" + encodeURIComponent(query.replace("$wiki ", ""));
-            } else if (query.startsWith("$yt ")) {
-                searchUrl = "https://www.youtube.com/results?search_query=" + encodeURIComponent(query.replace("$yt ", ""));
-            } else if (query.startsWith("$spotify ")) {
-                searchUrl = "https://open.spotify.com/search/" + encodeURIComponent(query.replace("$spotify ", ""));
-            } else if (query.startsWith("$s ")) {
-                searchUrl = "https://scratch.mit.edu/search/projects?q=" + encodeURIComponent(query.replace("$s ", ""));
-            }
-
-            // Prevents blank page issue by ensuring search query isn't empty
-            if (searchUrl !== "") {
-                window.open(searchUrl, "_blank", "noopener,noreferrer");
-            }
-        }
-    </script>
+    /* Themes */
+    body.dark-mode {
+      background: #121212;
+      color: white;
+    }
+    body.dark-mode input,
+    body.dark-mode button {
+      background: #1e1e1e;
+      color: white;
+      border: 1px solid #444;
+    }
+    body.hacker-mode {
+      background: black;
+      color: #00ff00;
+    }
+    body.hacker-mode input,
+    body.hacker-mode button {
+      background: black;
+      color: #00ff00;
+      border: 1px solid #00ff00;
+    }
+    body.winver-mode {
+      background: url('https://upload.wikimedia.org/wikipedia/en/6/64/Windows_XP_bliss.png') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+    }
+    body.winver-mode * {
+      color: white !important;
+      text-shadow: 0 0 3px black;
+    }
+  </style>
 </head>
 <body>
-    <div class="search-container">
-        <h2>Welcome to kacSearch</h2>
-        <form onsubmit="event.preventDefault(); performSearch();" target="_blank">
-            <input type="text" id="searchBox" placeholder="Type your search ($wiki, $yt, $spotify, $s, Minecraft)" required>
-            <button type="submit">KacSearch google</button>
-        </form>
+  <div class="search-container">
+    <h2>kacSearch</h2>
+    <form onsubmit="event.preventDefault(); performSearch();">
+      <input type="text" id="searchBox" placeholder="Search..." required />
+      <button type="submit">Search</button>
+    </form>
+  </div>
+
+  <button id="copilotBtn" onclick="openCopilot()">💬 AI</button>
+  <button id="settingsBtn" onclick="toggleSettings()">⚙️</button>
+
+  <audio id="xpSound" src="https://upload.wikimedia.org/wikipedia/en/8/8c/Windows_XP_Startup_sound.ogg"></audio>
+
+  <!-- AI Modal -->
+  <div class="modal" id="aiModal">
+    <div class="modal-content">
+      <span class="close" onclick="closeCopilot()">&times;</span>
+      <iframe src="https://copilot.microsoft.com" width="100%" height="100%" style="border:none;"></iframe>
     </div>
+  </div>
+
+  <!-- Settings Dropdown -->
+  <div id="settingsMenu">
+    <strong>Theme:</strong><br>
+    <button onclick="applyTheme('light')">Light</button>
+    <button onclick="applyTheme('dark')">Dark</button>
+    <button onclick="applyTheme('hacker')">Hacker</button>
+    <button onclick="applyTheme('xp')">XP Mode</button>
+    <br><br>
+    <strong>Search Engine:</strong><br>
+    <button onclick="setEngine('google')">A: Google</button>
+    <button onclick="setEngine('bing')">B: Bing</button>
+    <button onclick="setEngine('duck')">C: DuckDuckGo</button>
+    <button onclick="setEngine('roblox')">D: Roblox</button>
+  </div>
+
+  <script>
+    let engine = 'bing';
+
+    function performSearch() {
+      const q = document.getElementById("searchBox").value.trim();
+      if (!q) return;
+
+      if (q.toLowerCase() === "$sudo apt install minecraft") {
+        const steve = document.createElement("img");
+        steve.src = "https://upload.wikimedia.org/wikipedia/en/5/56/Steve_%28Minecraft%29.png";
+        steve.style = "width:80px;position:fixed;bottom:40px;left:50%;transform:translateX(-50%)";
+        document.body.appendChild(steve);
+        setTimeout(() => {
+          window.open("https://www.minecraft.net/en-us/download", "_blank");
+        }, 2000);
+        return;
+      }
+
+      let url = "https://www.bing.com/search?q=" + encodeURIComponent(q);
+      if (engine === "google") url = "https://www.google.com/search?q=" + encodeURIComponent(q);
+      else if (engine === "duck") url = "https://duckduckgo.com/?q=" + encodeURIComponent(q);
+      else if (engine === "roblox") url = "https://www.roblox.com/search?keyword=" + encodeURIComponent(q);
+
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+
+    function openCopilot() {
+      document.getElementById("aiModal").style.display = "block";
+    }
+
+    function closeCopilot() {
+      document.getElementById("aiModal").style.display = "none";
+    }
+
+    function toggleSettings() {
+      const menu = document.getElementById("settingsMenu");
+      menu.style.display = menu.style.display === "block" ? "none" : "block";
+    }
+
+    function applyTheme(mode) {
+      const body = document.body;
+      body.className = "";
+      if (mode === "dark") body.classList.add("dark-mode");
+      else if (mode === "hacker") body.classList.add("hacker-mode");
+      else if (mode === "xp") {
+        body.classList.add("winver-mode");
+        const xp = document.getElementById("xpSound");
+        if (xp) xp.play().catch(() => {});
+      }
+    }
+
+    function setEngine(e) {
+      engine = e;
+      toggleSettings();
+      alert("Search engine set to " + e.toUpperCase());
+    }
+  </script>
 </body>
 </html>
